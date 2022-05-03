@@ -29,17 +29,23 @@ defmodule MetamaskLoginWeb.ConnectLive do
   end
 
   def handle_event("connect", %{"sig" => sig}, %{assigns: %{current_account: current_account}} = socket) do
-    case ExWeb3EcRecover.recover_personal_signature( MetamaskLogin.Encoding.decode_sent_message(current_account), sig) do
+    cached_message = MetamaskLogin.Encoding.decode_sent_message(current_account)
+    case ExWeb3EcRecover.recover_personal_signature(cached_message, sig) do
       {:error, :recovery_failure} ->
         # show some kind of error message
         Cachex.put(:login, "signed_in:#{current_account}", false)
-        {:noreply, socket}
+        {:noreply, assign(socket, :signed_in, false)}
       key ->
-        # log someone in
-        IO.inspect(key)
-        Cachex.put(:login, "signed_in:#{current_account}", true)
-        socket = assign(socket, :signed_in, true)
-        {:noreply, socket}
+        if key == current_account do
+          # log someone in
+          IO.inspect(key)
+          Cachex.put(:login, "signed_in:#{current_account}", true)
+          socket = assign(socket, :signed_in, true)
+          {:noreply, socket}
+        else
+          Cachex.put(:login, "signed_in:#{current_account}", false)
+          {:noreply, assign(socket, :signed_in, false)}
+        end
     end
   end
 
