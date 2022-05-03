@@ -78,6 +78,7 @@ Hooks.Metamask = {
       currentSignature = null
       await window.ethereum.request({ method: 'personal_sign', "params": [event.detail, currentAccount] })
         .then((signature) => {
+          console.log(signature)
           handle_signature(signature)
         })
         .catch((error) => {
@@ -94,48 +95,11 @@ Hooks.Metamask = {
       }
 
       console.log(currentSignature)
-      this.pushEvent("connect", { sig: currentSignature, currentAccount: currentAccount })
+      this.pushEvent("connect", { sig: currentSignature })
     })
 
     this.pushEvent("js:mounted", { currentAccount: currentAccount })
   },
-
-  async get_account() {
-    window.ethereum.request({ method: 'eth_requestAccounts' })
-      .then((accounts) => {
-        console.log(accounts)
-      })
-      .catch((error) => {
-        if (error.code === 4001) {
-          // EIP-1193 userRejectedRequest error
-          console.log('Please connect to MetaMask.');
-        } else {
-          console.error(error);
-        }
-      });
-  },
-
-  async sign() {
-    window.ethereum.request({ method: 'eth_requestAccounts' })
-      .then((accounts) => {
-        signature = null
-        window.ethereum.request({ method: 'personal_sign', "params": ['0xdeadbeef', accounts[0]] })
-          .then((signature) => {
-            signature
-          })
-          .catch((error) => {
-            console.log(error)
-          })
-      })
-      .catch((error) => {
-        if (error.code === 4001) {
-          // EIP-1193 userRejectedRequest error
-          console.log('Please connect to MetaMask.');
-        } else {
-          console.error(error);
-        }
-      });
-  }
 }
 
 let liveSocket = new LiveSocket("/live", Socket, {
