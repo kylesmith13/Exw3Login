@@ -95,7 +95,7 @@ Hooks.Metamask = {
       }
 
       console.log(currentSignature)
-      this.pushEvent("connect", { sig: currentSignature })
+      this.pushEventTo("#metamask-container", "connect", { sig: currentSignature })
     })
 
     this.pushEvent("js:mounted", { currentAccount: currentAccount })

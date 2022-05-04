@@ -1,24 +1,19 @@
 defmodule MetamaskLogin.Encoding do
-  def cache_sent_message(account, code) do
-    encoded_message = encoded_sign_in_message_with_code(code)
-    Cachex.put(:login, "code:#{account}", encoded_message)
-    encoded_message
-  end
-
-  def decode_sent_message(account) do
-    MetamaskLogin.Encoding.fetch_sent_code(account)
-    |> Base.decode16!()
+  def cache_sent_code(account, code) do
+    Cachex.put(:login, "code:#{account}", code)
   end
 
   def fetch_sent_code(account) do
     Cachex.get!(:login, "code:#{account}")
   end
 
-  def encoded_sign_in_message_with_code(code) do
-    Base.encode16("#{decoded_sign_in_message()}. (Code: #{code})", case: :upper)
+  def encode_sign_in_message_with_code(code) do
+    Base.encode16("#{login_message()}. (Code: #{code})")
   end
 
-  def decoded_sign_in_message() do
-    Base.decode16!(Application.get_env(:metamask_login, :sign_message), case: :upper)
-  end
+  def login_message(), do: "Welcome to Elixir Metamask Login! Click sign to sign in."
 end
+
+# We have a flow ->
+# send encoded message to user, cache code for later
+# go get code to check thing
