@@ -2,6 +2,8 @@ defmodule MetamaskLoginWeb.LoginButton do
   use Phoenix.LiveComponent
   alias Phoenix.LiveView.JS
   alias MetamaskLogin.Encoding
+  alias MetamaskLogin.Helpers
+  alias MetamaskLogin.Caching
 
   def render(assigns) do
     ~H"""
@@ -10,7 +12,7 @@ defmodule MetamaskLoginWeb.LoginButton do
           <% is_nil(@current_account) -> %>
             <button id="connect-button" phx-click={connect()} phx-target={@myself}> Connect Wallet </button>
           <% @signed_in -> %>
-            <button id="sign out" phx-click="sign_out" phx-target={@myself}>Log Out</button>
+            <button id="sign out" phx-click="sign_out" phx-target={@myself}>Log Out <%= Helpers.shortened_address(@current_account) %></button>
           <% true -> %>
             <button phx-click={sign_in(assigns)} phx-target="#metamask-container">Web3 Login</button>
         <% end %>
@@ -23,8 +25,8 @@ defmodule MetamaskLoginWeb.LoginButton do
         %{"sig" => sig},
         %{assigns: %{current_account: current_account}} = socket
       ) do
-    cached_code = Encoding.fetch_sent_code(current_account)
-    message = "#{Encoding.login_message()}. (Code: #{cached_code})"
+    cached_code = Caching.fetch_sent_code(current_account)
+    message = "#{Helpers.login_message()}. (Code: #{cached_code})"
 
     case ExWeb3EcRecover.recover_personal_signature(message, sig) do
       {:error, :recovery_failure} ->
@@ -57,7 +59,7 @@ defmodule MetamaskLoginWeb.LoginButton do
 
   defp sign_in(%{current_account: account} = _assigns) do
     code = Enum.random(1_000..9_999)
-    Encoding.cache_sent_code(account, code)
+    Caching.cache_sent_code(account, code)
     JS.dispatch("js:sign_in", detail: Encoding.encode_sign_in_message_with_code(code))
   end
 end
