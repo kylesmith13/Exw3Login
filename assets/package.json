@@ -1,0 +1,14 @@
+{
+  "name": "assets",
+  "version": "1.0.0",
+  "main": "app.js",
+  "license": "MIT",
+  "devDependencies": {
+    "autoprefixer": "^10.4.7",
+    "postcss": "^8.4.13",
+    "postcss-loader": "^6.2.1"
+  },
+  "dependencies": {
+    "tailwindcss": "^3.0.24"
+  }
+}

@@ -14,7 +14,8 @@ defmodule MetamaskLoginWeb.LoginButton do
           <% @signed_in -> %>
             <button id="sign out" phx-click="sign_out" phx-target={@myself}>Log Out <%= Helpers.shortened_address(@current_account) %></button>
           <% true -> %>
-            <button phx-click={sign_in(assigns)} phx-target="#metamask-container">Web3 Login</button>
+            <div phx-click={sign_in(assigns)} phx-target="#metamask-container">Web3 Login
+            </div>
         <% end %>
       </div>
     """

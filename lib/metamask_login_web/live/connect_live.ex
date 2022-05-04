@@ -8,9 +8,7 @@ defmodule MetamaskLoginWeb.ConnectLive do
 
   def render(assigns) do
     ~H"""
-      <div>
-        <.live_component module={MetamaskLoginWeb.LoginButton} id="asdf" current_account={@current_account} signed_in={@signed_in} />
-      </div>
+      <.live_component module={MetamaskLoginWeb.LoginButton} id="asdf" current_account={@current_account} signed_in={@signed_in} />
     """
   end
 
